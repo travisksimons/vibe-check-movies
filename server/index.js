@@ -58,7 +58,6 @@ const createSessionLimiter = rateLimit({
 });
 
 app.use('/api/', apiLimiter);
-app.use('/api/session', createSessionLimiter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -329,8 +328,8 @@ app.get('/api/movies/quiz', async (req, res) => {
   res.json({ movies });
 });
 
-// Create session
-app.post('/api/session', (req, res) => {
+// Create session (rate limited to prevent abuse)
+app.post('/api/session', createSessionLimiter, (req, res) => {
   const hostName = sanitize(req.body.hostName);
   if (!hostName || hostName.length < 1) {
     return res.status(400).json({ error: 'Name is required' });
