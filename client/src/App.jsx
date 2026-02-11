@@ -85,15 +85,19 @@ function App() {
     }
   }, [sessionId]);
 
-  const fetchSession = async (id) => {
+  const fetchSession = async (id, redirectOnComplete = true) => {
     try {
       const res = await fetch(`/api/session/${id}`);
       const data = await res.json();
       setSessionData(data);
-      if (data.status === 'complete' && data.results) {
+      if (data.status === 'complete' && data.results && redirectOnComplete) {
         setResults(JSON.parse(data.results));
         setView('results');
+      } else if (data.status === 'collecting' && redirectOnComplete) {
+        // Session still in progress, go to lobby to wait
+        setView('lobby');
       }
+      return data;
     } catch (err) {
       console.error('Failed to fetch session:', err);
     }
@@ -162,6 +166,9 @@ function App() {
 
   const submitQuiz = async (answers) => {
     try {
+      // Ensure we're connected to socket room before submitting
+      socket.emit('join_session', sessionId);
+
       const res = await fetch(`/api/session/${sessionId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -227,7 +234,7 @@ function App() {
       return (
         <MovieQuiz
           onSubmit={submitQuiz}
-          onComplete={() => fetchSession(sessionId).then(() => setView('lobby'))}
+          onComplete={() => fetchSession(sessionId)}
           onBack={() => setView('lobby')}
         />
       );
