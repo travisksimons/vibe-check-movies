@@ -73,11 +73,14 @@ function MovieQuiz({ onSubmit, onComplete, onBack }) {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      await onSubmit(answers);
+      const result = await onSubmit(answers);
+      // Server generates results synchronously before responding,
+      // so by the time we get here, results should be in DB
+      // Wait a brief moment for socket event, then poll
+      await new Promise(r => setTimeout(r, 500));
       onComplete();
     } catch (err) {
       console.error('Failed to submit:', err);
-    } finally {
       setSubmitting(false);
     }
   };

@@ -415,8 +415,10 @@ app.post('/api/session/:id/submit', async (req, res) => {
 
   // Generate results when all complete
   if (allCompleted && session.status !== 'complete') {
+    console.log(`All participants completed for session ${id}, generating results...`);
     const results = await generateResults(participants);
     db.prepare('UPDATE sessions SET results = ?, status = ? WHERE id = ?').run(JSON.stringify(results), 'complete', id);
+    console.log(`Emitting results_ready to session:${id}`);
     io.to(`session:${id}`).emit('results_ready', { results });
   }
 
@@ -456,11 +458,20 @@ app.post('/api/session/:id/close', async (req, res) => {
 
 // Socket.io
 io.on('connection', (socket) => {
+  console.log('Socket connected:', socket.id);
+
   socket.on('join_session', (sessionId) => {
+    console.log(`Socket ${socket.id} joining session:${sessionId}`);
     socket.join(`session:${sessionId}`);
   });
+
   socket.on('leave_session', (sessionId) => {
+    console.log(`Socket ${socket.id} leaving session:${sessionId}`);
     socket.leave(`session:${sessionId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Socket disconnected:', socket.id);
   });
 });
 

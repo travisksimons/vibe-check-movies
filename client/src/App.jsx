@@ -71,8 +71,11 @@ function App() {
       });
 
       socket.on('results_ready', (data) => {
-        setResults(data.results);
-        setView('results');
+        console.log('results_ready received:', data);
+        if (data.results) {
+          setResults(data.results);
+          setView('results');
+        }
       });
 
       return () => {
