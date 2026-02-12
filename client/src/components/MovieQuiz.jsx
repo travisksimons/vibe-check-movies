@@ -73,10 +73,10 @@ function MovieQuiz({ onSubmit, onComplete, onBack }) {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const result = await onSubmit(answers);
+      await onSubmit(answers);
       // Server generates results synchronously before responding,
       // so by the time we get here, results should be in DB
-      // Wait a brief moment for socket event, then poll
+      // Wait a moment then redirect (results page will show loading if needed)
       await new Promise(r => setTimeout(r, 500));
       onComplete();
     } catch (err) {
@@ -84,6 +84,23 @@ function MovieQuiz({ onSubmit, onComplete, onBack }) {
       setSubmitting(false);
     }
   };
+
+  // Show generating screen while submitting
+  if (submitting) {
+    return (
+      <div className="min-h-screen bg-vt-black flex flex-col items-center justify-center px-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-vt-white rounded-full animate-ping" />
+            <div className="w-2 h-2 bg-vt-white rounded-full animate-ping" style={{ animationDelay: '0.2s' }} />
+            <div className="w-2 h-2 bg-vt-white rounded-full animate-ping" style={{ animationDelay: '0.4s' }} />
+          </div>
+          <p className="text-vt-gray text-sm">generating results...</p>
+          <p className="text-vt-gray text-xs">this may take a moment</p>
+        </div>
+      </div>
+    );
+  }
 
   const handlePrev = () => {
     if (currentIndex > 0) {

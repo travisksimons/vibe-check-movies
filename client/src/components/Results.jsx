@@ -5,36 +5,15 @@ function Results({ sessionData, results, participantName, onNewSession }) {
 
   if (!results) {
     return (
-      <div className="min-h-screen bg-vt-black flex flex-col px-6 py-8">
-        {/* Skeleton Header */}
-        <div className="mb-6">
-          <div className="skeleton skeleton-text w-20 mb-2"></div>
-          <div className="skeleton skeleton-title"></div>
-        </div>
-
-        {/* Skeleton Tabs */}
-        <div className="flex gap-2 mb-6">
-          <div className="skeleton w-16 h-10"></div>
-          <div className="skeleton w-16 h-10"></div>
-        </div>
-
-        {/* Skeleton Summary */}
-        <div className="mb-8">
-          <div className="skeleton skeleton-text w-24 mb-3"></div>
-          <div className="skeleton skeleton-text w-full"></div>
-          <div className="skeleton skeleton-text w-3/4"></div>
-        </div>
-
-        {/* Skeleton Recommendations */}
-        <div className="skeleton skeleton-text w-20 mb-3"></div>
-        <div className="flex flex-col gap-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="skeleton-card">
-              <div className="skeleton skeleton-title mb-2"></div>
-              <div className="skeleton skeleton-text w-full"></div>
-              <div className="skeleton skeleton-text w-2/3"></div>
-            </div>
-          ))}
+      <div className="min-h-screen bg-vt-black flex flex-col items-center justify-center px-6 py-8">
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-vt-white rounded-full animate-ping" />
+            <div className="w-2 h-2 bg-vt-white rounded-full animate-ping" style={{ animationDelay: '0.2s' }} />
+            <div className="w-2 h-2 bg-vt-white rounded-full animate-ping" style={{ animationDelay: '0.4s' }} />
+          </div>
+          <p className="text-vt-gray text-sm">generating results...</p>
+          <p className="text-vt-gray text-xs">analyzing everyone's picks</p>
         </div>
       </div>
     );
